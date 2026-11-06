@@ -1,0 +1,4 @@
+# Add to android/.gitignore
+key.properties
+**/*.jks
+**/*.keystore
