@@ -1,0 +1,108 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Supabase secrets
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "::error::Add SUPABASE_URL and SUPABASE_ANON_KEY in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Create the Android project
+        run: |
+          flutter create . --org com.dailycash --project-name daily_cash --platforms android
+          rm -f test/widget_test.dart
+          python3 tools/patch_android.py
+
+      - name: Signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/release.jks
+            STORE_PASS="$KEYSTORE_PASSWORD"; KEY_PASS="$KEY_PASSWORD"; ALIAS="$KEY_ALIAS"
+          else
+            echo "::warning::No signing secrets found. Using a temporary key for this build. A later build will not install over this one; uninstall first."
+            STORE_PASS="$(openssl rand -hex 12)"; KEY_PASS="$STORE_PASS"; ALIAS="upload"
+            keytool -genkeypair -keystore android/app/release.jks -storetype JKS \
+              -keyalg RSA -keysize 2048 -validity 10000 -alias "$ALIAS" \
+              -storepass "$STORE_PASS" -keypass "$KEY_PASS" \
+              -dname "CN=Daily Cash, O=Daily Cash, C=BD"
+          fi
+          printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=release.jks\n' \
+            "$STORE_PASS" "$KEY_PASS" "$ALIAS" > android/key.properties
+
+      - run: flutter pub get
+
+      - name: Analyze (information only)
+        continue-on-error: true
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+      - name: Tests (information only)
+        continue-on-error: true
+        run: flutter test
+
+      - name: Build APK
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          flutter build apk --release --target-platform android-arm,android-arm64 \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY"
+          cp build/app/outputs/flutter-apk/app-release.apk daily-cash.apk
+
+      - name: Checksum
+        id: hash
+        run: echo "sha=$(sha256sum daily-cash.apk | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daily-cash-apk
+          path: daily-cash.apk
+
+      - name: Publish a download link
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Daily Cash build ${{ github.run_number }}
+          prerelease: true
+          files: daily-cash.apk
+          body: |
+            Open this page on your Android phone, tap **daily-cash.apk**, then open the file to install.
+            If Android shows a warning, tap More details, then Install anyway.
+
+            SHA256: `${{ steps.hash.outputs.sha }}`

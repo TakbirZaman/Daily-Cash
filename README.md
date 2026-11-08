@@ -45,7 +45,25 @@ flutter run --dart-define-from-file=dart_defines.json
 5. **Project Settings → API**: copy the **Project URL** and the **anon public** key into
    `dart_defines.json`. Never put the `service_role` key in the app.
 
-## Build the APK
+## Build the APK in the cloud (no Flutter install needed)
+
+GitHub builds the signed APK for you every time you push to `main`.
+
+1. Push the project: `git push -u origin main`
+2. In the GitHub repo open **Settings → Secrets and variables → Actions → New repository secret**
+   and add two secrets: `SUPABASE_URL` and `SUPABASE_ANON_KEY` (Supabase → Project Settings → API).
+3. Open the **Actions** tab, choose **Build Android APK**, and click **Run workflow**
+   (it also runs on every push). It takes about 10 minutes.
+4. When it is green, open the repo's **Releases** page on your Android phone, tap `daily-cash.apk`,
+   then open the file to install. If Android warns, tap More details, then Install anyway.
+
+Signing: with no signing secrets, each build uses a temporary key, so a newer build will not
+install over an older one (uninstall first; your entries are safe once synced). For a permanent
+key, create a keystore once, then add `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` and
+`KEY_PASSWORD` as secrets. Keep the repo private if you do this. A red build shows the exact
+error in the log.
+
+## Build the APK on your own computer
 
 See `android_setup/ANDROID_RELEASE.md` (custom keystore, signed release build, permission check).
 Build command with your keys:
