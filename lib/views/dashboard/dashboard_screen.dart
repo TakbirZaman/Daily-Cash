@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../controllers/dashboard_controller.dart';
-import '../../core/constants/app_colors.dart';
 import '../../core/l10n/strings.dart';
+import '../../core/theme/colors.dart';
+import '../../core/theme/tokens.dart';
 import '../../core/utils/money.dart';
 import '../../core/utils/note_suggestions.dart';
+import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/pressable.dart';
+import '../../core/widgets/reveal.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../models/transaction_model.dart';
+import '../../services/ledger_service.dart';
 import '../calendar/calendar_screen.dart';
 import '../history/history_screen.dart';
 import '../report/report_screen.dart';
@@ -57,97 +64,119 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final AppPalette pal = context.pal;
 
     return Scaffold(
-      floatingActionButton: SizedBox(
-        width: 76,
-        height: 76,
-        child: FloatingActionButton(
-          onPressed: _openEditor,
-          backgroundColor: AppColors.income,
-          foregroundColor: Colors.white,
-          elevation: 6,
-          shape: const CircleBorder(),
-          child: const Icon(Icons.add_rounded, size: 44),
+      floatingActionButton: Pressable(
+        child: Tooltip(
+          message: S.t('add_entry'),
+          child: Material(
+            color: Brand.income,
+            elevation: 4,
+            shape: const CircleBorder(),
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: _openEditor,
+              child: const SizedBox(
+                width: 72,
+                height: 72,
+                child: Center(
+                  child: PhosphorIcon(PhosphorIconsRegular.plus, size: 36, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
       body: ListenableBuilder(
         listenable: _controller,
         builder: (BuildContext context, Widget? _) {
           final List<TransactionModel> items = _controller.recent;
+          final bool loading = !_controller.hasLoaded;
 
-          return CustomScrollView(
-            slivers: <Widget>[
-              SliverToBoxAdapter(
-                child: _Header(
-                  name: widget.name,
-                  balance: _controller.balance,
-                  onCalendar: () => _push(CalendarScreen(uid: widget.uid)),
-                  onReport: () => _push(ReportScreen(uid: widget.uid)),
-                  onSearch: () => _push(HistoryScreen(uid: widget.uid)),
-                  onSettings: () => _push(const SettingsScreen()),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: SummaryCard(
-                          label: S.t('today_income'),
-                          amount: _controller.todayIncome,
-                          color: AppColors.income,
-                          icon: Icons.south_west_rounded,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: SummaryCard(
-                          label: S.t('today_expense'),
-                          amount: _controller.todayExpense,
-                          color: AppColors.expense,
-                          icon: Icons.north_east_rounded,
-                        ),
-                      ),
-                    ],
+          return RefreshIndicator(
+            color: Brand.income,
+            backgroundColor: pal.card,
+            onRefresh: LedgerService.instance.sync,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: <Widget>[
+                SliverToBoxAdapter(
+                  child: _Header(
+                    name: widget.name,
+                    balance: _controller.balance,
+                    loading: loading,
+                    onCalendar: () => _push(CalendarScreen(uid: widget.uid)),
+                    onReport: () => _push(ReportScreen(uid: widget.uid)),
+                    onSearch: () => _push(HistoryScreen(uid: widget.uid)),
+                    onSettings: () => _push(const SettingsScreen()),
                   ),
                 ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-                  child: Text(S.t('recent'),
-                      style: TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.w800, color: pal.text)),
-                ),
-              ),
-              if (items.isEmpty)
-                SliverFillRemaining(
-                  hasScrollBody: false,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Text(
-                        _controller.hasLoaded ? S.t('empty') : S.t('loading'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(color: pal.muted, fontSize: 15),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(Space.x24, Space.x24, Space.x24, Space.x8),
+                    child: Reveal(
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: SummaryCard(
+                              label: S.t('today_income'),
+                              amount: _controller.todayIncome,
+                              color: Brand.income,
+                              icon: PhosphorIconsRegular.arrowDownLeft,
+                              loading: loading,
+                            ),
+                          ),
+                          const SizedBox(width: Space.x12),
+                          Expanded(
+                            child: SummaryCard(
+                              label: S.t('today_expense'),
+                              amount: _controller.todayExpense,
+                              color: Brand.expense,
+                              icon: PhosphorIconsRegular.arrowUpRight,
+                              loading: loading,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                )
-              else
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 110),
-                  sliver: SliverList.separated(
-                    itemCount: items.length,
-                    separatorBuilder: (BuildContext _, int __) => const SizedBox(height: 10),
-                    itemBuilder: (BuildContext ctx, int i) => TransactionTile(
-                      tx: items[i],
-                      onTap: () => _openEditor(existing: items[i]),
-                      onDelete: () => deleteWithUndo(ctx, widget.uid, items[i]),
-                    ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(Space.x24, Space.x24, Space.x24, Space.x12),
+                    child: Text(S.t('recent'), style: AppText.heading6(pal.text)),
                   ),
                 ),
-            ],
+                if (loading)
+                  const SliverPadding(
+                    padding: EdgeInsets.fromLTRB(Space.x24, 0, Space.x24, Space.x96),
+                    sliver: SliverToBoxAdapter(child: SkeletonList()),
+                  )
+                else if (items.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Reveal(
+                      child: EmptyState(
+                        icon: PhosphorIconsRegular.wallet,
+                        title: S.t('empty_title'),
+                        body: S.t('empty_body'),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(Space.x24, 0, Space.x24, Space.x96),
+                    sliver: SliverList.separated(
+                      itemCount: items.length,
+                      separatorBuilder: (BuildContext _, int __) =>
+                          const SizedBox(height: Space.x12),
+                      itemBuilder: (BuildContext ctx, int i) => TransactionTile(
+                        tx: items[i],
+                        onTap: () => _openEditor(existing: items[i]),
+                        onDelete: () => deleteWithUndo(ctx, widget.uid, items[i]),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),
@@ -159,6 +188,7 @@ class _Header extends StatelessWidget {
   const _Header({
     required this.name,
     required this.balance,
+    required this.loading,
     required this.onCalendar,
     required this.onReport,
     required this.onSearch,
@@ -167,6 +197,7 @@ class _Header extends StatelessWidget {
 
   final String name;
   final double balance;
+  final bool loading;
   final VoidCallback onCalendar;
   final VoidCallback onReport;
   final VoidCallback onSearch;
@@ -176,58 +207,51 @@ class _Header extends StatelessWidget {
     return IconButton(
       tooltip: tip,
       onPressed: onTap,
-      visualDensity: VisualDensity.compact,
-      icon: Icon(icon, color: Colors.white, size: 26),
+      icon: PhosphorIcon(icon, size: 24, color: Colors.white),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette pal = context.pal;
+
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(24, MediaQuery.of(context).padding.top + 16, 12, 32),
-      decoration: const BoxDecoration(
-        color: AppColors.ink,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
-      ),
+      padding: EdgeInsets.fromLTRB(
+          Space.x24, MediaQuery.of(context).padding.top + Space.x16, Space.x12, Space.x32),
+      decoration: BoxDecoration(color: pal.header, borderRadius: Rad.bottom(Rad.r24)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text('${S.t('hello')}$name',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white)),
-          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(right: Space.x12),
+            child: Text('${S.t('hello')}$name',
+                maxLines: 1, overflow: TextOverflow.ellipsis, style: AppText.title1(pal.onHeader)),
+          ),
+          const SizedBox(height: Space.x8),
           Row(
             children: <Widget>[
-              _icon(Icons.calendar_month_rounded, S.t('calendar'), onCalendar),
-              _icon(Icons.bar_chart_rounded, S.t('report'), onReport),
-              _icon(Icons.search_rounded, S.t('history'), onSearch),
-              _icon(Icons.settings_rounded, S.t('settings'), onSettings),
+              _icon(PhosphorIconsRegular.calendarBlank, S.t('calendar'), onCalendar),
+              _icon(PhosphorIconsRegular.chartBar, S.t('report'), onReport),
+              _icon(PhosphorIconsRegular.magnifyingGlass, S.t('history'), onSearch),
+              _icon(PhosphorIconsRegular.gear, S.t('settings'), onSettings),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: Space.x16),
           Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: Text(S.t('balance'),
-                style: const TextStyle(fontSize: 14, color: Colors.white70)),
+            padding: const EdgeInsets.only(right: Space.x12),
+            child: Text(S.t('balance'), style: AppText.caption1(pal.onHeaderMuted)),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: Space.x4),
           Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: Alignment.centerLeft,
-              child: Text(
-                Money.format(balance),
-                style: const TextStyle(
-                    fontSize: 46,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: -1),
-              ),
-            ),
+            padding: const EdgeInsets.only(right: Space.x12),
+            child: loading
+                ? const Skeleton(width: 192, height: 48, color: Color(0x29FFFFFF))
+                : FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(Money.format(balance), style: AppText.heading2(pal.onHeader)),
+                  ),
           ),
         ],
       ),

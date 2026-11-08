@@ -22,14 +22,12 @@ Add the lines from `gitignore_additions.txt` to `android/.gitignore`.
 ## 4. Gradle
 - Replace `android/app/build.gradle.kts` with `build.gradle.kts` from this folder.
 - Create an empty rules file:  `touch android/app/proguard-rules.pro`
-- In `android/settings.gradle.kts` plugins block, make sure this exists:
-      id("com.google.gms.google-services") version "4.4.2" apply false
-- Put `google-services.json` in `android/app/`.
+- No Google services plugin or `google-services.json` is needed (the backend is Supabase).
 
 ## 5. Build
     flutter clean
     flutter pub get
-    flutter build apk --release --split-per-abi
+    flutter build apk --release --split-per-abi --dart-define-from-file=dart_defines.json
 
 Send the client:  build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 (Play Store instead:  flutter build appbundle --release  ->  build/app/outputs/bundle/release/app-release.aab)
@@ -41,8 +39,7 @@ Send the client:  build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 `apksigner` and `aapt2` live in `$ANDROID_HOME/build-tools/<version>/`.
 The signer must show your certificate, not "Android Debug".
 
-## Note on new packages (v3)
-Export uses `share_plus` and `path_provider`. They need NO extra permissions; the
-share plugin adds an internal FileProvider entry that is merged automatically.
-The permission list should still be INTERNET (+ the harmless Firebase/AndroidX ones).
-Re-run the `aapt2 dump permissions` check after your first v3 build.
+## Permissions
+The app needs INTERNET only. Export uses `share_plus` and `path_provider`, which add no
+permissions (the share plugin merges an internal FileProvider entry). Re-run the
+`aapt2 dump permissions` check after your first build.

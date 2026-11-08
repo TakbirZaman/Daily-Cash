@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class TransactionType {
   TransactionType._();
   static const String income = 'income';
@@ -27,37 +25,81 @@ class TransactionModel {
 
   bool get isIncome => type == TransactionType.income;
 
-  Map<String, dynamic> toMap() => <String, dynamic>{
+  TransactionModel withPending(bool value) => TransactionModel(
+        id: id,
+        amount: amount,
+        type: type,
+        timestamp: timestamp,
+        note: note,
+        pending: value,
+      );
+
+  // ---- server row (Supabase) ----
+
+  Map<String, dynamic> toRow(String userId) => <String, dynamic>{
+        'id': id,
+        'user_id': userId,
         'amount': amount,
         'type': type,
-        'timestamp': Timestamp.fromDate(timestamp),
         'note': note ?? '',
+        'created_at': timestamp.toUtc().toIso8601String(),
       };
 
-  /// Returns null for malformed documents so one bad record never crashes the list.
-  static TransactionModel? fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+  /// Returns null for malformed rows so one bad record never crashes the list.
+  static TransactionModel? fromRow(Map<String, dynamic> r) {
     try {
-      final Map<String, dynamic>? d = doc.data();
-      if (d == null) return null;
-
-      final num? amount = d['amount'] as num?;
-      final String? type = d['type'] as String?;
-      if (amount == null ||
+      final String? id = r['id'] as String?;
+      final num? amount = r['amount'] as num?;
+      final String? type = r['type'] as String?;
+      final String? created = r['created_at'] as String?;
+      if (id == null ||
+          amount == null ||
+          created == null ||
           (type != TransactionType.income && type != TransactionType.expense)) {
         return null;
       }
-
-      final Object? rawTs = d['timestamp'];
-      final DateTime ts = rawTs is Timestamp ? rawTs.toDate() : DateTime.now();
-      final String note = (d['note'] as String? ?? '').trim();
-
+      final String note = (r['note'] as String? ?? '').trim();
       return TransactionModel(
-        id: doc.id,
+        id: id,
         amount: amount.toDouble(),
         type: type!,
-        timestamp: ts,
+        timestamp: DateTime.parse(created).toLocal(),
         note: note.isEmpty ? null : note,
-        pending: doc.metadata.hasPendingWrites,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // ---- local copy on the phone ----
+
+  Map<String, dynamic> toLocal() => <String, dynamic>{
+        'id': id,
+        'amount': amount,
+        'type': type,
+        'ts': timestamp.millisecondsSinceEpoch,
+        'note': note ?? '',
+      };
+
+  static TransactionModel? fromLocal(Map<String, dynamic> m) {
+    try {
+      final String? id = m['id'] as String?;
+      final num? amount = m['amount'] as num?;
+      final String? type = m['type'] as String?;
+      final int? ts = (m['ts'] as num?)?.toInt();
+      if (id == null ||
+          amount == null ||
+          ts == null ||
+          (type != TransactionType.income && type != TransactionType.expense)) {
+        return null;
+      }
+      final String note = (m['note'] as String? ?? '').trim();
+      return TransactionModel(
+        id: id,
+        amount: amount.toDouble(),
+        type: type!,
+        timestamp: DateTime.fromMillisecondsSinceEpoch(ts),
+        note: note.isEmpty ? null : note,
       );
     } catch (_) {
       return null;

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../controllers/calendar_controller.dart';
-import '../../core/constants/app_colors.dart';
 import '../../core/l10n/strings.dart';
+import '../../core/theme/colors.dart';
+import '../../core/theme/tokens.dart';
 import '../../core/utils/note_suggestions.dart';
+import '../../core/widgets/app_bar.dart';
+import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../models/transaction_model.dart';
 import '../dashboard/widgets/summary_card.dart';
 import '../dashboard/widgets/transaction_tile.dart';
@@ -38,7 +43,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _dot(Color color) => Container(
         width: 6,
         height: 6,
-        margin: const EdgeInsets.symmetric(horizontal: 1.5),
+        margin: const EdgeInsets.symmetric(horizontal: Space.x2),
         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
       );
 
@@ -47,9 +52,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final AppPalette pal = context.pal;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.t('calendar'), style: const TextStyle(fontWeight: FontWeight.w800)),
-      ),
+      appBar: appBarFor(context, S.t('calendar')),
       body: ListenableBuilder(
         listenable: _c,
         builder: (BuildContext context, Widget? _) {
@@ -57,12 +60,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
             slivers: <Widget>[
               SliverToBoxAdapter(
                 child: Container(
-                  margin: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                  padding: const EdgeInsets.only(bottom: 8),
-                  decoration: BoxDecoration(
-                    color: pal.card,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                  margin: const EdgeInsets.fromLTRB(Space.x24, Space.x4, Space.x24, 0),
+                  padding: const EdgeInsets.only(bottom: Space.x8),
+                  decoration: BoxDecoration(color: pal.card, borderRadius: Rad.all(Rad.r24)),
                   child: TableCalendar<int>(
                     locale: S.locale,
                     firstDay: DateTime.utc(2020, 1, 1),
@@ -76,43 +76,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     headerStyle: HeaderStyle(
                       formatButtonVisible: false,
                       titleCentered: true,
-                      titleTextStyle: TextStyle(
-                          fontSize: 17, fontWeight: FontWeight.w800, color: pal.text),
-                      leftChevronIcon: Icon(Icons.chevron_left, color: pal.text),
-                      rightChevronIcon: Icon(Icons.chevron_right, color: pal.text),
+                      titleTextStyle: AppText.title3(pal.text),
+                      leftChevronIcon:
+                          PhosphorIcon(PhosphorIconsRegular.caretLeft, size: 24, color: pal.text),
+                      rightChevronIcon:
+                          PhosphorIcon(PhosphorIconsRegular.caretRight, size: 24, color: pal.text),
                     ),
                     daysOfWeekStyle: DaysOfWeekStyle(
-                      weekdayStyle: TextStyle(color: pal.muted),
-                      weekendStyle: TextStyle(color: pal.muted),
+                      weekdayStyle: AppText.caption3(pal.muted),
+                      weekendStyle: AppText.caption3(pal.muted),
                     ),
                     selectedDayPredicate: (DateTime d) => isSameDay(_c.selectedDay, d),
                     onDaySelected: (DateTime selected, DateTime focused) =>
                         _c.selectDay(selected, focused),
                     onPageChanged: _c.onPageChanged,
                     calendarStyle: CalendarStyle(
-                      defaultTextStyle: TextStyle(color: pal.text),
-                      weekendTextStyle: TextStyle(color: pal.text),
-                      outsideTextStyle: TextStyle(color: pal.muted),
-                      selectedDecoration: const BoxDecoration(
-                          color: AppColors.income, shape: BoxShape.circle),
-                      selectedTextStyle: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.w800),
-                      todayDecoration: const BoxDecoration(
-                          color: Color(0x4D16A36A), shape: BoxShape.circle),
-                      todayTextStyle:
-                          TextStyle(color: pal.text, fontWeight: FontWeight.w700),
+                      defaultTextStyle: AppText.body5(pal.text),
+                      weekendTextStyle: AppText.body5(pal.text),
+                      outsideTextStyle: AppText.body5(pal.muted),
+                      selectedDecoration:
+                          const BoxDecoration(color: Brand.income, shape: BoxShape.circle),
+                      selectedTextStyle: AppText.body4(Colors.white),
+                      todayDecoration:
+                          BoxDecoration(color: pal.incomeSoft, shape: BoxShape.circle),
+                      todayTextStyle: AppText.body4(pal.text),
                     ),
                     calendarBuilders: CalendarBuilders<int>(
                       markerBuilder: (BuildContext context, DateTime day, List<int> events) {
                         return Positioned(
-                          bottom: 3,
+                          bottom: Space.x4,
                           left: 0,
                           right: 0,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              if (_c.hasIncome(day)) _dot(AppColors.income),
-                              if (_c.hasExpense(day)) _dot(AppColors.expense),
+                              if (_c.hasIncome(day)) _dot(pal.incomeText),
+                              if (_c.hasExpense(day)) _dot(pal.expenseText),
                             ],
                           ),
                         );
@@ -123,58 +122,62 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                  padding: const EdgeInsets.fromLTRB(Space.x24, Space.x24, Space.x24, Space.x12),
                   child: Text(
                     S.digits(DateFormat('EEEE, d MMMM y', S.locale).format(_c.selectedDay)),
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.w800, color: pal.text),
+                    style: AppText.heading6(pal.text),
                   ),
                 ),
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: Space.x24),
                   child: Row(
                     children: <Widget>[
                       Expanded(
                         child: SummaryCard(
                           label: S.t('total_income'),
                           amount: _c.income,
-                          color: AppColors.income,
-                          icon: Icons.south_west_rounded,
+                          color: Brand.income,
+                          icon: PhosphorIconsRegular.arrowDownLeft,
+                          loading: !_c.hasLoaded,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: Space.x12),
                       Expanded(
                         child: SummaryCard(
                           label: S.t('total_expense'),
                           amount: _c.expense,
-                          color: AppColors.expense,
-                          icon: Icons.north_east_rounded,
+                          color: Brand.expense,
+                          icon: PhosphorIconsRegular.arrowUpRight,
+                          loading: !_c.hasLoaded,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 16)),
-              if (_c.items.isEmpty)
+              const SliverToBoxAdapter(child: SizedBox(height: Space.x16)),
+              if (!_c.hasLoaded)
+                const SliverPadding(
+                  padding: EdgeInsets.fromLTRB(Space.x24, 0, Space.x24, Space.x32),
+                  sliver: SliverToBoxAdapter(child: SkeletonList(count: 2)),
+                )
+              else if (_c.items.isEmpty)
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Text(
-                      _c.hasLoaded ? S.t('no_tx_day') : S.t('loading'),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: pal.muted, fontSize: 15),
-                    ),
+                  child: EmptyState(
+                    icon: PhosphorIconsRegular.calendarBlank,
+                    title: S.t('day_empty_title'),
+                    body: S.t('day_empty_body'),
                   ),
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                  padding: const EdgeInsets.fromLTRB(Space.x24, 0, Space.x24, Space.x32),
                   sliver: SliverList.separated(
                     itemCount: _c.items.length,
-                    separatorBuilder: (BuildContext _, int __) => const SizedBox(height: 10),
+                    separatorBuilder: (BuildContext _, int __) =>
+                        const SizedBox(height: Space.x12),
                     itemBuilder: (BuildContext ctx, int i) {
                       final TransactionModel tx = _c.items[i];
                       return TransactionTile(

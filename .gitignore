@@ -17,3 +17,6 @@ android/key.properties
 **/*.keystore
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+
+# Local keys
+dart_defines.json

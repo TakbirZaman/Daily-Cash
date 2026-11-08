@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show Supabase, User;
 
 import 'controllers/auth_controller.dart';
-import 'core/constants/app_colors.dart';
+import 'core/config/supabase_config.dart';
 import 'core/l10n/strings.dart';
 import 'core/settings/app_settings.dart';
-import 'services/firestore_service.dart';
+import 'core/theme/colors.dart';
+import 'core/theme/tokens.dart';
+import 'services/auth_service.dart';
 import 'views/auth/auth_screen.dart';
 import 'views/auth/name_screen.dart';
 import 'views/dashboard/dashboard_screen.dart';
@@ -23,10 +24,16 @@ Future<void> main() async {
     FlutterError.onError = (FlutterErrorDetails _) {};
     PlatformDispatcher.instance.onError = (Object _, StackTrace __) => true;
 
-    try {
-      await Firebase.initializeApp();
-      FirestoreService.enableOfflinePersistence();
-    } catch (_) {}
+    bool backendReady = false;
+    if (SupabaseConfig.isConfigured) {
+      try {
+        await Supabase.initialize(
+          url: SupabaseConfig.url,
+          anonKey: SupabaseConfig.anonKey,
+        );
+        backendReady = true;
+      } catch (_) {}
+    }
 
     try {
       await initializeDateFormatting('en');
@@ -35,7 +42,7 @@ Future<void> main() async {
 
     await AppSettings.instance.load();
 
-    runApp(DailyCashApp());
+    runApp(backendReady ? DailyCashApp() : const _SetupNeededApp());
   }, (Object _, StackTrace __) {});
 }
 
@@ -44,12 +51,20 @@ ThemeData _buildTheme(Brightness brightness) {
   return ThemeData(
     useMaterial3: true,
     brightness: brightness,
-    colorSchemeSeed: AppColors.income,
+    fontFamily: 'Manrope',
+    colorSchemeSeed: Brand.income,
     scaffoldBackgroundColor: pal.bg,
     appBarTheme: AppBarTheme(
       backgroundColor: pal.bg,
       foregroundColor: pal.text,
       scrolledUnderElevation: 0,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Brand.ink,
+      actionTextColor: const Color(0xFF4ADE9A),
+      contentTextStyle: AppText.body5(Colors.white),
+      shape: RoundedRectangleBorder(borderRadius: Rad.all(Rad.r12)),
     ),
   );
 }
@@ -80,8 +95,8 @@ class DailyCashApp extends StatelessWidget {
   }
 }
 
-/// Decides the first screen. Because Firebase restores the session from the
-/// device, a logged-in user lands straight on the dashboard on every launch.
+/// Decides the first screen. Supabase restores the session from the device,
+/// so a logged in user lands straight on the dashboard on every launch.
 class _AuthGate extends StatelessWidget {
   const _AuthGate({required this.auth});
 
@@ -101,17 +116,42 @@ class _AuthGate extends StatelessWidget {
             if (user == null || auth.isSigningUp) {
               return AuthScreen(controller: auth);
             }
-            if ((user.displayName ?? '').trim().isEmpty) {
+            final String name = AuthService.nameOf(user);
+            if (name.isEmpty) {
               return NameScreen(controller: auth);
             }
-            return DashboardScreen(
-              key: ValueKey<String>(user.uid),
-              uid: user.uid,
-              name: user.displayName!.trim(),
-            );
+            return DashboardScreen(key: ValueKey<String>(user.id), uid: user.id, name: name);
           },
         );
       },
+    );
+  }
+}
+
+/// Shown only while developing, when the Supabase keys have not been added yet.
+class _SetupNeededApp extends StatelessWidget {
+  const _SetupNeededApp();
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: _buildTheme(Brightness.light),
+      home: Scaffold(
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Space.x24),
+            child: Center(
+              child: Text(
+                'Supabase is not set up yet.\n\nOpen lib/core/config/supabase_config.dart and add your '
+                'project URL and anon key, or run with --dart-define.',
+                textAlign: TextAlign.center,
+                style: AppText.body3(AppPalette.light.text),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -4,7 +4,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    id("com.google.gms.google-services")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -28,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId = "com.dailycash.app"   // must be unique; never change after release
-        minSdk = 23                            // required by current Firebase SDKs
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

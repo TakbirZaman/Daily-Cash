@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 import '../../controllers/history_controller.dart';
-import '../../core/constants/app_colors.dart';
 import '../../core/l10n/strings.dart';
+import '../../core/theme/colors.dart';
+import '../../core/theme/tokens.dart';
 import '../../core/utils/note_suggestions.dart';
+import '../../core/widgets/app_bar.dart';
+import '../../core/widgets/app_choice_chip.dart';
+import '../../core/widgets/app_input.dart';
+import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../models/transaction_model.dart';
 import '../dashboard/widgets/transaction_tile.dart';
 import '../dashboard/widgets/tx_actions.dart';
@@ -33,28 +40,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
     super.dispose();
   }
 
-  Widget _chip(String label, HistoryFilter value, Color color) {
-    final bool selected = _c.filter == value;
-    return ChoiceChip(
-      label: Text(label,
-          style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: selected ? Colors.white : context.pal.text)),
-      selected: selected,
-      selectedColor: color,
-      showCheckmark: false,
-      onSelected: (_) => _c.setFilter(value),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final AppPalette pal = context.pal;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.t('history'), style: const TextStyle(fontWeight: FontWeight.w800)),
-      ),
+      appBar: appBarFor(context, S.t('history')),
       body: ListenableBuilder(
         listenable: _c,
         builder: (BuildContext context, Widget? _) {
@@ -63,61 +54,77 @@ class _HistoryScreenState extends State<HistoryScreen> {
           return Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 8),
+                padding: const EdgeInsets.fromLTRB(Space.x24, Space.x4, Space.x24, Space.x12),
                 child: TextField(
                   onChanged: _c.setQuery,
-                  style: TextStyle(color: pal.text),
-                  decoration: InputDecoration(
-                    hintText: S.t('search_hint'),
-                    prefixIcon: const Icon(Icons.search_rounded),
-                    filled: true,
-                    fillColor: pal.card,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
+                  style: AppText.body3(pal.text),
+                  decoration: appInput(
+                    context,
+                    label: S.t('search_hint'),
+                    prefixIcon: PhosphorIconsRegular.magnifyingGlass,
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: Space.x24),
                 child: Row(
                   children: <Widget>[
-                    _chip(S.t('all'), HistoryFilter.all, AppColors.ink),
-                    const SizedBox(width: 8),
-                    _chip(S.t('income'), HistoryFilter.income, AppColors.income),
-                    const SizedBox(width: 8),
-                    _chip(S.t('expense'), HistoryFilter.expense, AppColors.expense),
+                    AppChoiceChip(
+                      label: S.t('all'),
+                      selected: _c.filter == HistoryFilter.all,
+                      color: pal.header,
+                      onTap: () => _c.setFilter(HistoryFilter.all),
+                    ),
+                    const SizedBox(width: Space.x8),
+                    AppChoiceChip(
+                      label: S.t('income'),
+                      selected: _c.filter == HistoryFilter.income,
+                      color: Brand.income,
+                      onTap: () => _c.setFilter(HistoryFilter.income),
+                    ),
+                    const SizedBox(width: Space.x8),
+                    AppChoiceChip(
+                      label: S.t('expense'),
+                      selected: _c.filter == HistoryFilter.expense,
+                      color: Brand.expense,
+                      onTap: () => _c.setFilter(HistoryFilter.expense),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: Space.x12),
               Expanded(
-                child: results.isEmpty
-                    ? Center(
-                        child: Text(
-                          _c.hasLoaded ? S.t('no_results') : S.t('loading'),
-                          style: TextStyle(color: pal.muted, fontSize: 15),
-                        ),
+                child: !_c.hasLoaded
+                    ? const SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(horizontal: Space.x24),
+                        child: SkeletonList(count: 5),
                       )
-                    : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-                        itemCount: results.length,
-                        separatorBuilder: (BuildContext _, int __) => const SizedBox(height: 10),
-                        itemBuilder: (BuildContext ctx, int i) {
-                          final TransactionModel tx = results[i];
-                          return TransactionTile(
-                            tx: tx,
-                            onTap: () => openTransactionEditor(
-                              ctx,
-                              uid: widget.uid,
-                              existing: tx,
-                              suggestions: NoteSuggestions.build(_c.all),
-                            ),
-                            onDelete: () => deleteWithUndo(ctx, widget.uid, tx),
-                          );
-                        },
-                      ),
+                    : results.isEmpty
+                        ? EmptyState(
+                            icon: PhosphorIconsRegular.magnifyingGlass,
+                            title: S.t('results_empty_title'),
+                            body: S.t('results_empty_body'),
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.fromLTRB(
+                                Space.x24, Space.x4, Space.x24, Space.x32),
+                            itemCount: results.length,
+                            separatorBuilder: (BuildContext _, int __) =>
+                                const SizedBox(height: Space.x12),
+                            itemBuilder: (BuildContext ctx, int i) {
+                              final TransactionModel tx = results[i];
+                              return TransactionTile(
+                                tx: tx,
+                                onTap: () => openTransactionEditor(
+                                  ctx,
+                                  uid: widget.uid,
+                                  existing: tx,
+                                  suggestions: NoteSuggestions.build(_c.all),
+                                ),
+                                onDelete: () => deleteWithUndo(ctx, widget.uid, tx),
+                              );
+                            },
+                          ),
               ),
             ],
           );

@@ -11,6 +11,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:share_plus/share_plus.dart';
 
 import '../core/l10n/strings.dart';
+import '../core/theme/colors.dart';
 import '../core/utils/money.dart';
 import '../models/transaction_model.dart';
 
@@ -162,7 +163,7 @@ class ExportService {
       final TextPainter tp = TextPainter(
         text: TextSpan(
           text: s,
-          style: TextStyle(fontSize: size, fontWeight: weight, color: color),
+          style: TextStyle(fontFamily: 'Manrope', fontSize: size, fontWeight: weight, color: color),
         ),
         textDirection: TextDirection.ltr,
         textAlign: align,
@@ -172,20 +173,20 @@ class ExportService {
       tp.paint(canvas, Offset(x, y));
     }
 
-    const Color ink = Color(0xFF12332B);
-    const Color green = Color(0xFF16A36A);
-    const Color red = Color(0xFFE5484D);
+    const Color ink = Brand.ink;
+    const Color green = Brand.income;
+    const Color red = Brand.expense;
     const double left = 80;
     const double contentW = _w - 160;
 
     double y = 80;
-    text(S.t('app_name'), left, y, size: 54, weight: FontWeight.w800, color: ink);
+    text(S.t('app_name'), left, y, size: 54, weight: FontWeight.w700, color: ink);
     text(
       S.digits(DateFormat('MMMM y', S.locale).format(month)),
       left,
       y + 70,
       size: 32,
-      color: const Color(0xFF6B7C77),
+      color: const Color(0xFF5B6B66),
     );
 
     if (page == 0) {
@@ -195,7 +196,7 @@ class ExportService {
       text('${S.t('total_expense')}: ${Money.format(expense)}', left + 520, y,
           width: 510, size: 28, weight: FontWeight.w700, color: red);
       text('${S.t('month_balance')}: ${Money.format(income - expense)}', left, y + 50,
-          width: 900, size: 30, weight: FontWeight.w800, color: ink);
+          width: 900, size: 30, weight: FontWeight.w700, color: ink);
       y = 360;
     } else {
       y = 230;
@@ -235,7 +236,7 @@ class ExportService {
       text(t.isIncome ? S.t('income') : S.t('expense'), left + 690, y + 6,
           width: 130, size: 22, color: c, weight: FontWeight.w700);
       text(Money.format(t.amount), left + 830, y + 6,
-          width: 184, size: 22, color: c, weight: FontWeight.w800, align: TextAlign.right);
+          width: 184, size: 22, color: c, weight: FontWeight.w700, align: TextAlign.right);
       y += 54;
     }
 
@@ -243,7 +244,7 @@ class ExportService {
         _h - 80,
         width: contentW,
         size: 20,
-        color: const Color(0xFF6B7C77),
+        color: const Color(0xFF5B6B66),
         align: TextAlign.center);
 
     final ui.Picture picture = recorder.endRecording();

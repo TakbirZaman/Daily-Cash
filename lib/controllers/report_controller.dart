@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/transaction_model.dart';
-import '../services/firestore_service.dart';
+import '../services/ledger_service.dart';
 
 class ReportController extends ChangeNotifier {
-  ReportController({required this.uid, FirestoreService? service})
-      : _service = service ?? FirestoreService.instance {
+  ReportController({required this.uid, LedgerService? service})
+      : _service = service ?? LedgerService.instance {
     _load();
   }
 
   final String uid;
-  final FirestoreService _service;
+  final LedgerService _service;
   StreamSubscription<List<TransactionModel>>? _sub;
 
   DateTime month = DateTime(DateTime.now().year, DateTime.now().month);

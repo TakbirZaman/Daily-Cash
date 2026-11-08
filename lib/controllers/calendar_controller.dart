@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/transaction_model.dart';
-import '../services/firestore_service.dart';
+import '../services/ledger_service.dart';
 
 class CalendarController extends ChangeNotifier {
-  CalendarController({required this.uid, FirestoreService? service})
-      : _service = service ?? FirestoreService.instance {
+  CalendarController({required this.uid, LedgerService? service})
+      : _service = service ?? LedgerService.instance {
     selectDay(DateTime.now());
   }
 
   final String uid;
-  final FirestoreService _service;
+  final LedgerService _service;
   StreamSubscription<List<TransactionModel>>? _daySub;
   StreamSubscription<List<TransactionModel>>? _monthSub;
 

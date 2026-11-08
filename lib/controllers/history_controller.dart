@@ -4,18 +4,18 @@ import 'package:flutter/foundation.dart';
 
 import '../core/l10n/strings.dart';
 import '../models/transaction_model.dart';
-import '../services/firestore_service.dart';
+import '../services/ledger_service.dart';
 
 enum HistoryFilter { all, income, expense }
 
 class HistoryController extends ChangeNotifier {
-  HistoryController({required this.uid, FirestoreService? service})
-      : _service = service ?? FirestoreService.instance {
+  HistoryController({required this.uid, LedgerService? service})
+      : _service = service ?? LedgerService.instance {
     _sub = _service.watchTransactions(uid).listen(_onData, onError: (Object _) {});
   }
 
   final String uid;
-  final FirestoreService _service;
+  final LedgerService _service;
   StreamSubscription<List<TransactionModel>>? _sub;
 
   List<TransactionModel> _all = const <TransactionModel>[];

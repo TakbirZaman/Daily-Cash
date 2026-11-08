@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/l10n/strings.dart';
 import '../../core/settings/app_settings.dart';
+import '../../core/theme/colors.dart';
+import '../../core/theme/tokens.dart';
+import '../../core/widgets/app_bar.dart';
+import '../../core/widgets/app_choice_chip.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
-  Widget _choice(BuildContext context, String label, bool selected, VoidCallback onTap) {
-    return ChoiceChip(
-      label: Text(label,
-          style: TextStyle(
-              fontWeight: FontWeight.w700,
-              color: selected ? Colors.white : context.pal.text)),
-      selected: selected,
-      selectedColor: AppColors.income,
-      showCheckmark: false,
-      onSelected: (_) => onTap(),
+  Widget _group(AppPalette pal, String title, List<Widget> chips) {
+    return Container(
+      padding: const EdgeInsets.all(Space.x16),
+      decoration: BoxDecoration(color: pal.card, borderRadius: Rad.all(Rad.r16)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(title, style: AppText.title3(pal.text)),
+          const SizedBox(height: Space.x12),
+          Wrap(spacing: Space.x8, runSpacing: Space.x8, children: chips),
+        ],
+      ),
     );
   }
 
@@ -26,71 +31,43 @@ class SettingsScreen extends StatelessWidget {
     final AppSettings settings = AppSettings.instance;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(S.t('settings'), style: const TextStyle(fontWeight: FontWeight.w800)),
-      ),
+      appBar: appBarFor(context, S.t('settings')),
       body: ListenableBuilder(
         listenable: settings,
         builder: (BuildContext context, Widget? _) {
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(Space.x24),
             children: <Widget>[
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: pal.card,
-                  borderRadius: BorderRadius.circular(20),
+              _group(pal, S.t('language'), <Widget>[
+                AppChoiceChip(
+                  label: 'English',
+                  selected: !settings.isBangla,
+                  onTap: () => settings.setBangla(false),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(S.t('language'),
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w800, color: pal.text)),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      children: <Widget>[
-                        _choice(context, 'English', !settings.isBangla,
-                            () => settings.setBangla(false)),
-                        _choice(context, 'বাংলা', settings.isBangla,
-                            () => settings.setBangla(true)),
-                      ],
-                    ),
-                  ],
+                AppChoiceChip(
+                  label: 'বাংলা',
+                  selected: settings.isBangla,
+                  onTap: () => settings.setBangla(true),
                 ),
-              ),
-              const SizedBox(height: 14),
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: pal.card,
-                  borderRadius: BorderRadius.circular(20),
+              ]),
+              const SizedBox(height: Space.x16),
+              _group(pal, S.t('theme'), <Widget>[
+                AppChoiceChip(
+                  label: S.t('theme_system'),
+                  selected: settings.themeMode == ThemeMode.system,
+                  onTap: () => settings.setThemeMode(ThemeMode.system),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(S.t('theme'),
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.w800, color: pal.text)),
-                    const SizedBox(height: 10),
-                    Wrap(
-                      spacing: 10,
-                      children: <Widget>[
-                        _choice(context, S.t('theme_system'),
-                            settings.themeMode == ThemeMode.system,
-                            () => settings.setThemeMode(ThemeMode.system)),
-                        _choice(context, S.t('theme_light'),
-                            settings.themeMode == ThemeMode.light,
-                            () => settings.setThemeMode(ThemeMode.light)),
-                        _choice(context, S.t('theme_dark'),
-                            settings.themeMode == ThemeMode.dark,
-                            () => settings.setThemeMode(ThemeMode.dark)),
-                      ],
-                    ),
-                  ],
+                AppChoiceChip(
+                  label: S.t('theme_light'),
+                  selected: settings.themeMode == ThemeMode.light,
+                  onTap: () => settings.setThemeMode(ThemeMode.light),
                 ),
-              ),
+                AppChoiceChip(
+                  label: S.t('theme_dark'),
+                  selected: settings.themeMode == ThemeMode.dark,
+                  onTap: () => settings.setThemeMode(ThemeMode.dark),
+                ),
+              ]),
             ],
           );
         },
