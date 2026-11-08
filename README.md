@@ -59,3 +59,26 @@ flutter build apk --release --split-per-abi --dart-define-from-file=dart_defines
 ```bash
 flutter test
 ```
+
+## Download page (docs/)
+
+A one page site where your client downloads the APK. The APK file lives in Supabase Storage and
+the page is hosted free on GitHub Pages. Supabase serves HTML files as plain text, so the page
+itself cannot be hosted there.
+
+1. **Upload the APK.** Supabase → SQL Editor → run `supabase/releases_bucket.sql`
+   (or Storage → New bucket → name `releases`, Public on). Upload your
+   `app-arm64-v8a-release.apk` as `daily-cash.apk`. The free plan allows files up to 50 MB.
+2. **Point the page at it.** Open `docs/config.js` and set `apkUrl` to
+   `https://YOUR_PROJECT_ID.supabase.co/storage/v1/object/public/releases/daily-cash.apk`.
+   Optional: add `version` and the output of `sha256sum daily-cash.apk` as `sha256`.
+   Until `apkUrl` is set, the download buttons show as disabled ("Download link coming soon").
+3. **Publish the page.** GitHub repo → Settings → Pages → Deploy from a branch →
+   `main` and the `/docs` folder. The page appears at `https://TakbirZaman.github.io/Daily-Cash/`.
+4. **Fill the placeholders.** Replace `{{contact_email}}` and `{{owner_name}}` in
+   `docs/privacy.html` and `docs/terms.html`, and have both pages reviewed.
+5. **Optional.** Social previews need an absolute image link: change `og:image` in
+   `docs/index.html` to `https://TakbirZaman.github.io/Daily-Cash/og.png`.
+
+To ship an update, upload the new APK under a new name (for example `daily-cash-1.0.1.apk`)
+and change `apkUrl`. Public files are cached, so a new name avoids people getting the old file.

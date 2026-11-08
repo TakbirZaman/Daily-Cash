@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Cash: a daily income and expense ledger for Android</title>
+  <meta name="description" content="Daily Cash is an Android app for writing down your income and expenses every day. Works without internet, in English and Bangla.">
+  <meta name="theme-color" content="#12332B">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Daily Cash: know where your money went">
+  <meta property="og:description" content="An Android ledger for your own income and expenses. Works without internet, in English and Bangla.">
+  <meta property="og:image" content="og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/Manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <noscript><style>.reveal{opacity:1;transform:none}.tagline .w{color:var(--text)}</style></noscript>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Where do I get the app?", "acceptedAnswer": {"@type": "Answer", "text": "This page gives you Daily Cash as an APK file, which you install directly on your Android phone. Tap the download button, open the file, and allow the install when Android asks."}}, {"@type": "Question", "name": "Why does Android show a warning when I install?", "acceptedAnswer": {"@type": "Answer", "text": "Android shows a prompt for any app that does not come from the Play Store, and for apps from developers it has not seen often. The file is signed with the developer's own key. To continue, tap More details, then Install anyway. If a checksum is listed on this page, you can compare it with the file you downloaded to confirm it is the original."}}, {"@type": "Question", "name": "Does it work without internet?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, after the first login. You need internet once to create your account or log in. After that you can add, edit and delete entries offline, and they sync when your connection returns. A small cloud icon marks entries that are still waiting to sync."}}, {"@type": "Question", "name": "Where is my data stored?", "acceptedAnswer": {"@type": "Answer", "text": "Your entries are saved on your phone and synced to a private database, linked to your account. Only the account you log in with can read them. The privacy page explains what is stored."}}, {"@type": "Question", "name": "Can I fix a mistake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Tap an entry to change its amount, note or type. Swipe an entry to the left to delete it, and tap Undo within five seconds if you change your mind."}}, {"@type": "Question", "name": "Can I use it on more than one phone?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Log in with the same account on the other phone, and pull down on the home screen to refresh."}}, {"@type": "Question", "name": "How do I keep a copy of my records?", "acceptedAnswer": {"@type": "Answer", "text": "Open Monthly summary, tap the share icon, and choose PDF or Excel. The file is created on your phone and you decide where to send it."}}, {"@type": "Question", "name": "Can I use it in Bangla?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Switch between English and বাংলা in Settings. Numbers change to Bangla digits too, and there is a dark theme."}}]}</script>
+</head>
+<body>
+  <a class="skip button-sm" href="#main">Skip to content</a>
+
+  <header class="nav" role="banner">
+    <a class="brand title-4" href="./" aria-label="Daily Cash home">
+      <span class="brand-mark"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M216,64H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,56V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm0,128H56a8,8,0,0,1-8-8V78.63A23.84,23.84,0,0,0,56,80H216Zm-48-60a12,12,0,1,1,12,12A12,12,0,0,1,168,132Z"/></svg></span>
+      <span>Daily Cash</span>
+    </a>
+    <a class="btn btn-sm button-sm" href="#" data-download aria-disabled="true"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,148a12,12,0,1,1-12-12A12,12,0,0,1,176,148ZM92,136a12,12,0,1,0,12,12A12,12,0,0,0,92,136Zm148,24v24a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V161.13A113.38,113.38,0,0,1,51.4,78.72L26.34,53.66A8,8,0,0,1,37.66,42.34L63.82,68.5a111.43,111.43,0,0,1,128.55-.19l26-26a8,8,0,0,1,11.32,11.32L204.82,78.5c.75.71,1.5,1.43,2.24,2.17A111.25,111.25,0,0,1,240,160Zm-16,0a96,96,0,0,0-96-96h-.34C74.91,64.18,32,107.75,32,161.13V184H224Z"/></svg><span data-label data-soon="Coming soon">Download</span></a>
+  </header>
+
+  <main id="main">
+    <section class="hero section">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-title">Know where your money went<br>without the spreadsheet</h1>
+          <p class="hero-sub body-3">Daily Cash is a ledger for your own income and expenses. Add an entry in a few seconds, even with no internet, then see the day, the month and the places most of your money went.</p>
+          <div class="hero-cta">
+            <a class="btn button-md" href="#" data-download aria-disabled="true"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,148a12,12,0,1,1-12-12A12,12,0,0,1,176,148ZM92,136a12,12,0,1,0,12,12A12,12,0,0,0,92,136Zm148,24v24a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V161.13A113.38,113.38,0,0,1,51.4,78.72L26.34,53.66A8,8,0,0,1,37.66,42.34L63.82,68.5a111.43,111.43,0,0,1,128.55-.19l26-26a8,8,0,0,1,11.32,11.32L204.82,78.5c.75.71,1.5,1.43,2.24,2.17A111.25,111.25,0,0,1,240,160Zm-16,0a96,96,0,0,0-96-96h-.34C74.91,64.18,32,107.75,32,161.13V184H224Z"/></svg><span data-label data-soon="Download link coming soon">Download Daily Cash for Android</span></a>
+            <p class="caption-1 muted">Installs from a file. Your entries stay on your phone first, and you can export them to PDF or Excel whenever you like.</p>
+            <div class="meta-row caption-1" data-meta>
+            <span data-version hidden>Version <span></span></span>
+            <span data-sha hidden>SHA256 <span class="mono"></span></span>
+          </div>
+          </div>
+          <ul class="proof caption-1">
+            <li><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.92,210.62a8,8,0,1,1-11.84,10.76l-52-57.15a60,60,0,0,0-57.41,7.24,8,8,0,1,1-9.42-12.93A75.43,75.43,0,0,1,128,144c1.28,0,2.55,0,3.82.1L104.9,114.49A108,108,0,0,0,61,135.31,8,8,0,0,1,49.73,134,8,8,0,0,1,51,122.77a124.27,124.27,0,0,1,41.71-21.66L69.37,75.4a155.43,155.43,0,0,0-40.29,24A8,8,0,0,1,18.92,87,171.87,171.87,0,0,1,58,62.86L42.08,45.38A8,8,0,1,1,53.92,34.62ZM128,192a12,12,0,1,0,12,12A12,12,0,0,0,128,192ZM237.08,87A172.3,172.3,0,0,0,106,49.4a8,8,0,1,0,2,15.87A158.33,158.33,0,0,1,128,64a156.25,156.25,0,0,1,98.92,35.37A8,8,0,0,0,237.08,87ZM195,135.31a8,8,0,0,0,11.24-1.3,8,8,0,0,0-1.3-11.24,124.25,124.25,0,0,0-51.73-24.2A8,8,0,1,0,150,114.24,108.12,108.12,0,0,1,195,135.31Z"/></svg>Works offline</li>
+            <li><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M247.15,212.42l-56-112a8,8,0,0,0-14.31,0l-21.71,43.43A88,88,0,0,1,108,126.93,103.65,103.65,0,0,0,135.69,64H160a8,8,0,0,0,0-16H104V32a8,8,0,0,0-16,0V48H32a8,8,0,0,0,0,16h87.63A87.76,87.76,0,0,1,96,116.35a87.74,87.74,0,0,1-19-31,8,8,0,1,0-15.08,5.34A103.63,103.63,0,0,0,84,127a87.55,87.55,0,0,1-52,17,8,8,0,0,0,0,16,103.46,103.46,0,0,0,64-22.08,104.18,104.18,0,0,0,51.44,21.31l-26.6,53.19a8,8,0,0,0,14.31,7.16L148.94,192h70.11l13.79,27.58A8,8,0,0,0,240,224a8,8,0,0,0,7.15-11.58ZM156.94,176,184,121.89,211.05,176Z"/></svg>English and <span lang="bn">বাংলা</span></li>
+            <li><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>Signed Android app</li>
+          </ul>
+        </div>
+
+        <div class="phone-wrap reveal">
+          <div class="phone" role="img" aria-label="Daily Cash home screen showing a balance, today's income and expense, and three recent entries">
+            <div class="screen" aria-hidden="true">
+              <div class="screen-head">
+                <div class="hello caption-1">Hello, Rahim</div>
+                <div class="hello caption-5" style="margin-top: var(--s-200)">Current balance</div>
+                <div class="screen-balance">৳ 18,430</div>
+              </div>
+              <div class="screen-body">
+                <div class="mini-cards">
+                  <div class="mini-card in"><span class="caption-4">Today's income</span><b>৳ 2,340</b></div>
+                  <div class="mini-card out"><span class="caption-4">Today's expense</span><b>৳ 145</b></div>
+                </div>
+                <div class="mini-row body-6"><span>Freelance payment</span><span class="amt-in">+৳ 2,340</span></div>
+                <div class="mini-row body-6"><span>Rickshaw</span><span class="amt-out">−৳ 60</span></div>
+                <div class="mini-row body-6"><span>Tea and snacks</span><span class="amt-out">−৳ 85</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tagline" aria-label="What Daily Cash is for">
+      <div class="container">
+        <p><span class="t" data-text="Every taka you earn and spend, written down the day it happens, and ready when you need to look back.">Every taka you earn and spend, written down the day it happens, and ready when you need to look back.</span></p>
+      </div>
+    </section>
+
+    <section class="section" id="benefits">
+      <div class="container">
+        <h2 class="heading-4 section-title reveal">Built for writing things down, not for managing a system</h2>
+        <div class="bento">
+          <article class="card reveal">
+            <div class="icon-tile"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"/></svg></div>
+            <h3 class="heading-6">Add an entry in seconds</h3>
+            <p class="body-6 muted">Type the amount, add an optional note about where the money went, then tap Income or Expense. The date and time are filled in for you.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon-tile"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.92,210.62a8,8,0,1,1-11.84,10.76l-52-57.15a60,60,0,0,0-57.41,7.24,8,8,0,1,1-9.42-12.93A75.43,75.43,0,0,1,128,144c1.28,0,2.55,0,3.82.1L104.9,114.49A108,108,0,0,0,61,135.31,8,8,0,0,1,49.73,134,8,8,0,0,1,51,122.77a124.27,124.27,0,0,1,41.71-21.66L69.37,75.4a155.43,155.43,0,0,0-40.29,24A8,8,0,0,1,18.92,87,171.87,171.87,0,0,1,58,62.86L42.08,45.38A8,8,0,1,1,53.92,34.62ZM128,192a12,12,0,1,0,12,12A12,12,0,0,0,128,192ZM237.08,87A172.3,172.3,0,0,0,106,49.4a8,8,0,1,0,2,15.87A158.33,158.33,0,0,1,128,64a156.25,156.25,0,0,1,98.92,35.37A8,8,0,0,0,237.08,87ZM195,135.31a8,8,0,0,0,11.24-1.3,8,8,0,0,0-1.3-11.24,124.25,124.25,0,0,0-51.73-24.2A8,8,0,1,0,150,114.24,108.12,108.12,0,0,1,195,135.31Z"/></svg></div>
+            <h3 class="heading-6">Works without internet</h3>
+            <p class="body-6 muted">Entries are saved on your phone first and sync when you are back online.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon-tile"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z"/></svg></div>
+            <h3 class="heading-6">See the month at a glance</h3>
+            <p class="body-6 muted">Totals, a daily chart and the five places most of your money went, for any month.</p>
+          </article>
+          <article class="card reveal">
+            <div class="icon-tile"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></svg></div>
+            <h3 class="heading-6">Take your records with you</h3>
+            <p class="body-6 muted">Export any month as a PDF or an Excel file, and search every entry by note or amount.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="container">
+        <h2 class="heading-4 section-title reveal">Three steps to your first entry</h2>
+        <ol class="steps reveal">
+          <li class="step">
+            <span class="step-n button-sm" aria-hidden="true">1</span>
+            <div><h3 class="heading-6">Download and install</h3><p class="body-6 muted">Download the file, open it, and allow the install when Android asks.</p></div>
+          </li>
+          <li class="rule" role="presentation"></li>
+          <li class="step">
+            <span class="step-n button-sm" aria-hidden="true">2</span>
+            <div><h3 class="heading-6">Create your account</h3><p class="body-6 muted">Enter your name, email and a password. You stay logged in on that phone.</p></div>
+          </li>
+          <li class="rule" role="presentation"></li>
+          <li class="step">
+            <span class="step-n button-sm" aria-hidden="true">3</span>
+            <div><h3 class="heading-6">Write down your day</h3><p class="body-6 muted">Tap the plus button after each purchase or payment. Check the calendar and the monthly summary whenever you like.</p></div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <h2 class="heading-4 section-title reveal">Questions before you install</h2>
+        <div class="faq reveal">
+        <details><summary class="title-3"><span>Where do I get the app?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">This page gives you Daily Cash as an APK file, which you install directly on your Android phone. Tap the download button, open the file, and allow the install when Android asks.</p></details>
+        <details><summary class="title-3"><span>Why does Android show a warning when I install?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Android shows a prompt for any app that does not come from the Play Store, and for apps from developers it has not seen often. The file is signed with the developer's own key. To continue, tap More details, then Install anyway. If a checksum is listed on this page, you can compare it with the file you downloaded to confirm it is the original.</p></details>
+        <details><summary class="title-3"><span>Does it work without internet?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Yes, after the first login. You need internet once to create your account or log in. After that you can add, edit and delete entries offline, and they sync when your connection returns. A small cloud icon marks entries that are still waiting to sync.</p></details>
+        <details><summary class="title-3"><span>Where is my data stored?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Your entries are saved on your phone and synced to a private database, linked to your account. Only the account you log in with can read them. The privacy page explains what is stored.</p></details>
+        <details><summary class="title-3"><span>Can I fix a mistake?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Yes. Tap an entry to change its amount, note or type. Swipe an entry to the left to delete it, and tap Undo within five seconds if you change your mind.</p></details>
+        <details><summary class="title-3"><span>Can I use it on more than one phone?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Yes. Log in with the same account on the other phone, and pull down on the home screen to refresh.</p></details>
+        <details><summary class="title-3"><span>How do I keep a copy of my records?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Open Monthly summary, tap the share icon, and choose PDF or Excel. The file is created on your phone and you decide where to send it.</p></details>
+        <details><summary class="title-3"><span>Can I use it in Bangla?</span><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></summary><p class="answer body-6">Yes. Switch between English and <span lang="bn">বাংলা</span> in Settings. Numbers change to Bangla digits too, and there is a dark theme.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section final">
+      <div class="container">
+        <div class="box reveal">
+          <h2 class="heading-4" style="max-width: 680px">Start writing down your day</h2>
+          <p class="body-3 muted" style="margin-top: var(--s-100); max-width: 680px">Download the file, install it, and add your first entry in a minute. Your entries stay on your phone first, and you can export them whenever you like.</p>
+          <div class="hero-cta">
+            <a class="btn button-md" href="#" data-download aria-disabled="true"><svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="currentColor"><path d="M176,148a12,12,0,1,1-12-12A12,12,0,0,1,176,148ZM92,136a12,12,0,1,0,12,12A12,12,0,0,0,92,136Zm148,24v24a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V161.13A113.38,113.38,0,0,1,51.4,78.72L26.34,53.66A8,8,0,0,1,37.66,42.34L63.82,68.5a111.43,111.43,0,0,1,128.55-.19l26-26a8,8,0,0,1,11.32,11.32L204.82,78.5c.75.71,1.5,1.43,2.24,2.17A111.25,111.25,0,0,1,240,160Zm-16,0a96,96,0,0,0-96-96h-.34C74.91,64.18,32,107.75,32,161.13V184H224Z"/></svg><span data-label data-soon="Download link coming soon">Download Daily Cash for Android</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-row caption-1">
+      <span>© <span data-year>2026</span> Daily Cash</span>
+      <nav aria-label="Legal">
+        <a class="link" href="privacy.html">Privacy</a>
+        <a class="link" href="terms.html">Terms</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
