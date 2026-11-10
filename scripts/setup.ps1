@@ -11,7 +11,10 @@ param(
     [string]$ProjectName = 'daily-cash',
     [string]$Region = 'ap-south-1',      # Mumbai, the closest region to Dhaka
     [string]$SupabaseUrl = '',           # give both to skip creating the Supabase project
-    [string]$SupabaseKey = ''
+    [string]$SupabaseKey = '',
+    [string]$ContactEmail = '',          # for the privacy and terms pages
+    [string]$OwnerName = '',
+    [switch]$NoPrompt                    # never ask questions (for scripts and agents)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -79,6 +82,7 @@ Ok 'git and gh are ready'
 Step '2/9 Signing in to GitHub'
 $status = NativeText { gh auth status }
 if ($status -notmatch 'Logged in') {
+    if ($NoPrompt) { throw 'Run this once yourself first: gh auth login --hostname github.com --git-protocol https --web --scopes "repo,workflow"' }
     Native { gh auth login --hostname github.com --git-protocol https --web --scopes 'repo,workflow' }
 }
 elseif ($status -notmatch 'workflow') {
@@ -99,6 +103,7 @@ else {
     Step '3/9 Connecting to Supabase'
     $token = $env:SUPABASE_ACCESS_TOKEN
     if (-not $token) {
+        if ($NoPrompt) { throw 'Set SUPABASE_ACCESS_TOKEN first (create it at https://supabase.com/dashboard/account/tokens).' }
         Write-Host '    Create a token at https://supabase.com/dashboard/account/tokens (any name), then paste it here.'
         $secure = Read-Host '    Supabase access token (hidden)' -AsSecureString
         $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secure)
@@ -236,8 +241,12 @@ if (Get-Command adb -ErrorAction SilentlyContinue) {
 
 # ---------------------------------------------------------------- 9. download page
 Step '9/9 Publishing the download page'
-$email = Read-Host '    Contact email for the privacy page (Enter to skip)'
-$owner = Read-Host '    Your name or business name for the terms page (Enter to skip)'
+$email = $ContactEmail
+$owner = $OwnerName
+if (-not $NoPrompt) {
+    if (-not $email) { $email = Read-Host '    Contact email for the privacy page (Enter to skip)' }
+    if (-not $owner) { $owner = Read-Host '    Your name or business name for the terms page (Enter to skip)' }
+}
 $apkLink = "https://github.com/$Repo/releases/latest/download/daily-cash.apk"
 
 $cfg = Get-Content -Raw -Encoding UTF8 'docs\config.js'
