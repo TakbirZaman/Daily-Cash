@@ -165,7 +165,7 @@ class ExportService {
           text: s,
           style: TextStyle(fontFamily: 'Manrope', fontSize: size, fontWeight: weight, color: color),
         ),
-        textDirection: TextDirection.ltr,
+        textDirection: ui.TextDirection.ltr,
         textAlign: align,
         maxLines: 1,
         ellipsis: '…',
