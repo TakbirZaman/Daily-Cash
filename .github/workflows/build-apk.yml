@@ -99,7 +99,8 @@ jobs:
         with:
           tag_name: build-${{ github.run_number }}
           name: Daily Cash build ${{ github.run_number }}
-          prerelease: true
+          prerelease: false
+          make_latest: true
           files: daily-cash.apk
           body: |
             Open this page on your Android phone, tap **daily-cash.apk**, then open the file to install.

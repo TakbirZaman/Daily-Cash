@@ -7,7 +7,8 @@
   buttons.forEach(function (a) {
     var label = a.querySelector("[data-label]");
     if (cfg.apkUrl) {
-      var url = cfg.apkUrl + (cfg.apkUrl.indexOf("?") === -1 ? "?download=daily-cash.apk" : "");
+      var url = cfg.apkUrl;
+      if (url.indexOf("supabase.co") !== -1 && url.indexOf("?") === -1) url += "?download=daily-cash.apk";
       a.setAttribute("href", url);
       a.removeAttribute("aria-disabled");
       a.removeAttribute("tabindex");

@@ -20,3 +20,8 @@ ios/Runner/GoogleService-Info.plist
 
 # Local keys
 dart_defines.json
+
+# Local setup output (never commit)
+.dailycash-secrets.txt
+daily-cash.apk
+build-error.txt

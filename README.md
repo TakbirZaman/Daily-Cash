@@ -19,7 +19,29 @@ lib/
 supabase/schema.sql   database table + row level security
 ```
 
-## How to run
+## Fastest way: one command (Windows)
+
+Needs only Git. The script installs the GitHub CLI if it is missing.
+
+```bat
+cd /d D:\daily_cash
+setup.bat
+```
+
+It signs you in to GitHub, creates the Supabase project and database, saves the keys as GitHub
+secrets, pushes the code, builds the APK on GitHub, downloads it as `daily-cash.apk`, and publishes
+the download page. You paste one Supabase access token when asked
+(https://supabase.com/dashboard/account/tokens).
+
+If the database already exists, skip the Supabase steps:
+
+```bat
+setup.bat -SupabaseUrl https://YOUR_PROJECT_ID.supabase.co -SupabaseKey YOUR_PUBLISHABLE_KEY
+```
+
+If the build fails, the end of the error is saved to `build-error.txt`.
+
+## How to run on your own computer
 
 ```bash
 # 1. Create the Android/iOS folders (one time)
@@ -35,7 +57,7 @@ flutter run --dart-define-from-file=dart_defines.json
 
 ## Supabase setup (one time)
 
-1. Create a project at supabase.com. Pick the region closest to your users (Singapore for Bangladesh).
+1. Create a project at supabase.com. Pick the region closest to your users (Mumbai for Bangladesh).
 2. **SQL Editor → New query**, paste `supabase/schema.sql`, click Run.
 3. **Authentication → Providers → Email**: turn **Confirm email** OFF.
    If it stays on, new users cannot log in until they click a link, which breaks the sign up flow.
