@@ -83,6 +83,7 @@ for name in [
     "phosphor_icons_light.dart",
     "phosphor_icons_bold.dart",
     "phosphor_icons_fill.dart",
+    "phosphor_icons_duotone.dart",
 ]:
     patch_flat(SRC / name)
 
