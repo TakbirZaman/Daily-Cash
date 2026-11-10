@@ -30,3 +30,16 @@ gh api -X POST repos/TakbirZaman/Daily-Cash/pages -f "source[branch]=main" -f "s
 adb install -r daily-cash.apk
 ```
 The push starts the build by itself. Use `gh workflow run build-apk.yml --repo TakbirZaman/Daily-Cash` only if no run started.
+
+## Your project (database already created and checked)
+Project: Daily_Cash  (bpxlcbagrjcgbofxjmxd, Mumbai)
+```bat
+cd /d D:\daily_cash
+setup.bat -NoPrompt -ContactEmail you@example.com -OwnerName "Your Name" -SupabaseUrl https://bpxlcbagrjcgbofxjmxd.supabase.co -SupabaseKey sb_publishable_y3QlQ-_GWPMNEKtO9FgP0g_A7k9nzIL
+```
+If sign in later says "Invalid API key", use the legacy anon key from the Supabase dashboard
+(Project Settings, API Keys, Legacy) as `-SupabaseKey` instead and run the same command again.
+
+Two settings in the dashboard (not available through the API tools used so far):
+- Confirm email OFF:  https://supabase.com/dashboard/project/bpxlcbagrjcgbofxjmxd/auth/providers  (Email)
+- Reset Password email, add `{{ .Token }}`:  https://supabase.com/dashboard/project/bpxlcbagrjcgbofxjmxd/auth/templates

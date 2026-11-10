@@ -19,16 +19,18 @@ alter table public.transactions enable row level security;
 
 drop policy if exists "read own" on public.transactions;
 create policy "read own" on public.transactions
-  for select using (auth.uid() = user_id);
+  for select to authenticated using ((select auth.uid()) = user_id);
 
 drop policy if exists "insert own" on public.transactions;
 create policy "insert own" on public.transactions
-  for insert with check (auth.uid() = user_id);
+  for insert to authenticated with check ((select auth.uid()) = user_id);
 
 drop policy if exists "update own" on public.transactions;
 create policy "update own" on public.transactions
-  for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+  for update to authenticated
+  using ((select auth.uid()) = user_id)
+  with check ((select auth.uid()) = user_id);
 
 drop policy if exists "delete own" on public.transactions;
 create policy "delete own" on public.transactions
-  for delete using (auth.uid() = user_id);
+  for delete to authenticated using ((select auth.uid()) = user_id);
